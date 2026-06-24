@@ -6,12 +6,10 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "rol")
+@Table(name = "roles")
 @Data
 public class Rol {
-
     @Id
-private Long id;
-
+    private Long id;
     private String nombre;
 }

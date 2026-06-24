@@ -53,21 +53,31 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     return http.build();
 }
 
+
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowedOrigins(List.of("http://localhost:4200")); 
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
-        configuration.setExposedHeaders(List.of("Authorization"));
-        configuration.setAllowCredentials(true);
+    // 1. Define claramente el origen permitido de tu Front-end
+    configuration.setAllowedOrigins(List.of("http://localhost:4200")); 
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); 
-        return source;
-    }
+    // 2. Declara los métodos HTTP explícitos para tu API
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+    // 3. Unifica las cabeceras en una sola instrucción. 
+    // Al usar AllowCredentials(true), es mucho más seguro y compatible listar las comunes más el comodín si lo requiere el framework:
+    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
+
+    // 4. Habilita explícitamente el uso de credenciales y tokens entre puertos diferidos
+    configuration.setAllowCredentials(true);
+
+    // 5. Expón la cabecera para que Angular pueda interceptar y leer el Token devuelto
+    configuration.setExposedHeaders(List.of("Authorization"));
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration); 
+    return source;
+}
 
     @Bean
     public CommandLineRunner initDatabase(

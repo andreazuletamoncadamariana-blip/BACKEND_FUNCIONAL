@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.uniremington.parque_api.entity.Rol;
 import com.uniremington.parque_api.entity.Usuario;
+import com.uniremington.parque_api.repository.RolRepository;
 import com.uniremington.parque_api.repository.UsuarioRepository;
 
 @RestController
@@ -19,13 +21,16 @@ import com.uniremington.parque_api.repository.UsuarioRepository;
 public class UsuarioController {
 
     private final UsuarioRepository repo;
+    private final RolRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UsuarioController(
             UsuarioRepository repo,
+            RolRepository rolRepository,
             PasswordEncoder passwordEncoder) {
 
         this.repo = repo;
+        this.rolRepository = rolRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -45,6 +50,23 @@ public class UsuarioController {
         usuario.setPassword(
                 passwordEncoder.encode(usuario.getPassword())
         );
+
+        return repo.save(usuario);
+    }
+
+    @PostMapping("/registrar-docente")
+    public Usuario registrarDocente(@RequestBody Usuario usuario) {
+
+        Rol rolProfesor = rolRepository
+                .findByNombre("PROFESOR")
+                .orElseThrow(() ->
+                        new RuntimeException("Rol PROFESOR no existe"));
+
+        usuario.setPassword(
+                passwordEncoder.encode(usuario.getPassword())
+        );
+
+        usuario.setRol(rolProfesor);
 
         return repo.save(usuario);
     }

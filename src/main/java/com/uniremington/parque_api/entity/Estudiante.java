@@ -1,22 +1,27 @@
 package com.uniremington.parque_api.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "estudiantes") 
+@Table(name = "estudiantes")
 public class Estudiante {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nombre;
+
+    @Column(unique = true)
     private String email;
+
+    private String documento;
+
+    private String facultad;
+
     private String password;
-    private String programa;
-    private Integer horas;
+
+    private Boolean activo;
 }
